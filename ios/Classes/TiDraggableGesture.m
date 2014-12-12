@@ -240,7 +240,8 @@
     [self mapProxyOriginToCollection:[self valueForKey:@"maps"]
                     withTranslationX:tmpTranslationX
                      andTranslationY:tmpTranslationY];
-
+    
+    // get the view and find its coords
     TiViewProxy* panningProxy = (TiViewProxy*)[self.proxy.view proxy];
 
     float left = [panningProxy view].frame.origin.x;
@@ -252,7 +253,8 @@
                                     [TiUtils pointToDictionary:self.proxy.view.center], @"center",
                                     [TiUtils pointToDictionary:[panRecognizer velocityInView:self.proxy.view]], @"velocity",
                                     nil];
-
+    
+    // Lets communicate back to Titanium world with events
     if([panningProxy _hasListeners:@"start"] && [panRecognizer state] == UIGestureRecognizerStateBegan)
     {
         [panningProxy fireEvent:@"start" withObject:tiProps];
