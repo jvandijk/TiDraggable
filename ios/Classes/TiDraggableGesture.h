@@ -44,12 +44,14 @@
     CGPoint touchStart;
     CGPoint touchEnd;
     CGPoint lastAnimationPosition;
+    BOOL isLognPressed;
 }
 
 - (id)initWithProxy:(TiViewProxy*)proxy andOptions:(NSDictionary*)options;
 
 @property (nonatomic, assign) TiViewProxy* proxy;
 @property (nonatomic, retain) UIGestureRecognizer* gesture;
+@property (nonatomic, retain) UIGestureRecognizer* longpress;
 
 typedef void (^CallbackBlock)(void);
 

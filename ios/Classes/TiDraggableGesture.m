@@ -46,8 +46,16 @@
     if (self = [super init])
     {
         self.proxy = proxy;
+        
+        // set GestureRecognizers
         self.gesture = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panDetected:)];
-
+        self.longpress = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(longPressListener:)];
+        isLognPressed = NO;
+        
+        // add delegates
+        [self.gesture setDelegate:self];
+        [self.longpress setDelegate:self];
+        
         [self.proxy setValue:self forKey:@"draggable"];
         [self.proxy setProxyObserver:self];
 
@@ -65,12 +73,14 @@
     if (! gestureIsAttached && [self.proxy viewReady])
     {
         [self.proxy.view addGestureRecognizer:self.gesture];
+        [self.proxy.view addGestureRecognizer:self.longpress];
     }
 }
 
 - (void)dealloc
 {
     RELEASE_TO_NIL(self.gesture);
+    RELEASE_TO_NIL(self.longpress);
 
     [super dealloc];
 }
