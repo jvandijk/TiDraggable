@@ -614,4 +614,16 @@
     }
 }
 
+
+# pragma UIGestureRecognizerDelegate
+
+-(BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldReceiveTouch:(UITouch *)touch {
+    return YES;
+}
+
+// make sure the two GestureRecognizers can work together simultaneously
+- (BOOL)gestureRecognizer:(UIPanGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UILongPressGestureRecognizer *)otherGestureRecognizer {
+    return YES;
+}
+
 @end
