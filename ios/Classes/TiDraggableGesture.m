@@ -124,6 +124,76 @@
     }
 }
 
+
+- (void)addShadowToDraggedView:(TiViewProxy *)proxy
+{
+    proxy.view.layer.masksToBounds = NO;
+    proxy.view.layer.shadowOffset = CGSizeMake(0, 0);
+    proxy.view.layer.shadowRadius = 8;
+    proxy.view.layer.shadowOpacity = 0.8;
+}
+
+- (void)removeShadowToDraggedView:(TiViewProxy *)proxy
+{
+    proxy.view.layer.shadowOpacity = 0;
+}
+
+
+
+// longpress listener
+- (void)longPressListener:(UILongPressGestureRecognizer *)gesture
+{
+    
+    if([TiUtils boolValue:[self valueForKey:@"enableOnLongpress"] def:NO] == YES)
+    {
+        
+        // get the view that is touched
+        TiViewProxy* panningProxy = (TiViewProxy*)[self.proxy.view proxy];
+        
+        float left = [panningProxy view].frame.origin.x;
+        float top = [panningProxy view].frame.origin.y;
+        
+        NSMutableDictionary *tiProps = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                        [NSNumber numberWithFloat:left], @"left",
+                                        [NSNumber numberWithFloat:top], @"top",
+                                        [TiUtils pointToDictionary:self.proxy.view.center], @"center",
+                                        nil];
+        // What state are we in?
+        if(gesture.state == UIGestureRecognizerStateBegan)
+        {
+            isLognPressed = YES;
+            
+            [panningProxy fireEvent:@"start" withObject:tiProps];
+            
+            // show shadow
+            if([TiUtils boolValue:[self valueForKey:@"showShadowOnMove"] def:NO] == YES){
+                [self addShadowToDraggedView:panningProxy];
+            }
+        }
+        else if(gesture.state == UIGestureRecognizerStateChanged)
+        {
+            // nothing - let the pan gesture recognizer do the work
+        }
+        else if(gesture.state == UIGestureRecognizerStateEnded || gesture.state == UIGestureRecognizerStateCancelled)
+        {
+            isLognPressed = NO;
+            
+            [tiProps setValue:[NSDictionary dictionaryWithObjectsAndKeys:
+                               [NSNumber numberWithFloat:touchEnd.x - touchStart.x], @"x",
+                               [NSNumber numberWithFloat:touchEnd.y - touchStart.y], @"y",
+                               nil] forKey:@"distance"];
+            
+            [panningProxy fireEvent:([gesture state] == UIGestureRecognizerStateCancelled ? @"cancel" : @"end") withObject:tiProps];
+            
+            // hide shadow
+            if([TiUtils boolValue:[self valueForKey:@"showShadowOnMove"] def:NO] == YES){
+                [self removeShadowToDraggedView:panningProxy];
+            }
+        }
+    
+    }
+}
+
 - (void)panDetected:(UIPanGestureRecognizer *)panRecognizer
 {
     ENSURE_UI_THREAD_1_ARG(panRecognizer);
