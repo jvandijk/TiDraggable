@@ -66,7 +66,7 @@
 
     if (proxy)
     {
-        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options];
+        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options withDelegate:self];
     }
 }
 
@@ -114,10 +114,26 @@
     {
         NSDictionary* options = [proxy valueForKeyPath:@"draggableConfig"];
 
-        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options];
+        [[TiDraggableGesture alloc] initWithProxy:proxy andOptions:options withDelegate:self];
     }
 
     return proxy;
+}
+
+#pragma TiDraggableGestureDelegate
+
+- (void)fireGlobalEvent:(NSString *)eventName withObject:(NSDictionary*)eventData
+{
+    if ([self _hasListeners:eventName]) {
+        [self fireEvent:eventName withObject:eventData];
+    }
+}
+ 
+- (void)fireGlobalEvent:(NSString *)eventName withObject:(NSDictionary*)eventData withSource:(id)source
+{
+    if ([self _hasListeners:eventName]) {
+        [self fireEvent:eventName withObject:eventData withSource:source];
+    }
 }
 
 @end

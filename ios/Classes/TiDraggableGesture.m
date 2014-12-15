@@ -41,7 +41,7 @@
 
 @implementation TiDraggableGesture
 
-- (id)initWithProxy:(TiViewProxy*)proxy andOptions:(NSDictionary *)options
+- (id)initWithProxy:(TiViewProxy*)proxy andOptions:(NSDictionary *)options withDelegate:(id <TiDraggableGestureDelegate>)delegate
 {
     if (self = [super init])
     {
@@ -55,6 +55,7 @@
         // add delegates
         [self.gesture setDelegate:self];
         [self.longpress setDelegate:self];
+        self.delegate = delegate;
         
         [self.proxy setValue:self forKey:@"draggable"];
         [self.proxy setProxyObserver:self];
@@ -163,7 +164,7 @@
         {
             isLognPressed = YES;
             
-            [panningProxy fireEvent:@"start" withObject:tiProps];
+            [self checkAndFireEvent:panningProxy withName:@"start" withObject:tiProps];
             
             // show shadow
             if([TiUtils boolValue:[self valueForKey:@"showShadowOnMove"] def:NO] == YES){
@@ -183,7 +184,7 @@
                                [NSNumber numberWithFloat:touchEnd.y - touchStart.y], @"y",
                                nil] forKey:@"distance"];
             
-            [panningProxy fireEvent:([gesture state] == UIGestureRecognizerStateCancelled ? @"cancel" : @"end") withObject:tiProps];
+            [self checkAndFireEvent:panningProxy withName:([gesture state] == UIGestureRecognizerStateCancelled ? @"cancel" : @"end") withObject:tiProps];
             
             // hide shadow
             if([TiUtils boolValue:[self valueForKey:@"showShadowOnMove"] def:NO] == YES){
@@ -327,13 +328,13 @@
                                     nil];
     
     // Lets communicate back to Titanium world with events
-    if([panningProxy _hasListeners:@"start"] && [panRecognizer state] == UIGestureRecognizerStateBegan)
+    if([panRecognizer state] == UIGestureRecognizerStateBegan)
     {
-        [panningProxy fireEvent:@"start" withObject:tiProps];
+        [self checkAndFireEvent:panningProxy withName:@"start" withObject:tiProps];
     }
-    else if([panningProxy _hasListeners:@"move"] && [panRecognizer state] == UIGestureRecognizerStateChanged)
+    else if([panRecognizer state] == UIGestureRecognizerStateChanged)
     {
-        [panningProxy fireEvent:@"move" withObject:tiProps];
+        [self checkAndFireEvent:panningProxy withName:@"move" withObject:tiProps];
     }
     else if([panRecognizer state] == UIGestureRecognizerStateEnded || [panRecognizer state] == UIGestureRecognizerStateCancelled)
     {
@@ -342,9 +343,20 @@
                            [NSNumber numberWithFloat:touchEnd.y - touchStart.y], @"y",
                            nil] forKey:@"distance"];
 
-        [panningProxy fireEvent:([panRecognizer state] == UIGestureRecognizerStateCancelled ? @"cancel" : @"end")
-                     withObject:tiProps];
+        [self checkAndFireEvent:panningProxy withName:([panRecognizer state] == UIGestureRecognizerStateCancelled ? @"cancel" : @"end") withObject:tiProps];
     }
+}
+ 
+// helper to fire instance events and global events
+- (void)checkAndFireEvent:(TiViewProxy*)proxy withName:(NSString*)eventName withObject:(id)eventData
+{
+    if([proxy _hasListeners:eventName])
+    {
+        [proxy fireEvent:eventName withObject:eventData];
+    }
+    
+    // fire global
+    [self.delegate fireGlobalEvent:eventName withObject:eventData withSource:proxy];
 }
 
 - (void)correctMappedProxyPositions
