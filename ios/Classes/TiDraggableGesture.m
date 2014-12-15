@@ -197,12 +197,14 @@
 - (void)panDetected:(UIPanGestureRecognizer *)panRecognizer
 {
     ENSURE_UI_THREAD_1_ARG(panRecognizer);
-
-    if ([TiUtils boolValue:[self valueForKey:@"enabled"] def:YES] == NO)
+    
+    // check if isLognPressed and enabled is disabled
+    // if just one of those are enabled - then continue to pan the view
+    if ( !isLognPressed && [TiUtils boolValue:[self valueForKey:@"enabled"] def:YES] != YES)
     {
         return;
     }
-
+    
     NSString* axis = [self valueForKey:@"axis"];
     NSInteger maxLeft = [[self valueForKey:@"maxLeft"] floatValue];
     NSInteger minLeft = [[self valueForKey:@"minLeft"] floatValue];
@@ -221,13 +223,13 @@
         [self.proxy.view setFrame:[[self.proxy.view.layer presentationLayer] frame]];
         [self.proxy.view.layer removeAllAnimations];
     }
-
+    
     CGPoint translation = [panRecognizer translationInView:self.proxy.view];
     CGPoint newCenter = self.proxy.view.center;
     CGSize size = self.proxy.view.frame.size;
 
     float tmpTranslationX, tmpTranslationY;
-
+    
     if ([panRecognizer state] == UIGestureRecognizerStateBegan)
     {
         touchStart = self.proxy.view.frame.origin;
