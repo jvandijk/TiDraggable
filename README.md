@@ -110,7 +110,7 @@ Fires when the drag ends, passing:
 - `left`, `top` - The coordinates of the left top of the view.
 - `source` - The view being dragged
 - `distance.x`, `distance.y` - The distance the view was dragged over.
-- 
+
 ### cancel
 Fires when the drag is interupted by an incoming call for example.
 
