@@ -8,7 +8,7 @@ The original module was done by [Pedro Enrique](https://github.com/pec1985/TiDra
 See [Changelog](#changelog) for details.
 
 ## Usage
-See the (iOS) [example](ios/example/app.js) for a demo.
+See the [example](example/app.js) for a demo.
 
 ```javascript
 var Draggable = require('ti.draggable');
