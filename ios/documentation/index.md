@@ -84,7 +84,9 @@ An array of views that should be translated along with the view being dragged. S
 
 ## Events
 
-Draggable views emit the following events:
+Draggable views emit the following events.
+
+**iOS ONLY:** Only on iOS, you can also listen to these same events on the module instead of the views created. Look at the event's `source` property to see what view is being dragged.
 
 ### start
 Fires when the view starts dragging, passing:
