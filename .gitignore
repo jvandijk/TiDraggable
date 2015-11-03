@@ -3,6 +3,5 @@ android/build/*
 android/dist
 
 .DS_Store
-*.zip
 *.xcuserdatad
 *.xccheckout
