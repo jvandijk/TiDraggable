@@ -1,7 +1,9 @@
 ios/build/*
 android/build/*
 android/dist
+android/java-sources.txt
 
 .DS_Store
 *.xcuserdatad
 *.xccheckout
+node_modules
