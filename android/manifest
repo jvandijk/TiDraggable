@@ -1,6 +1,6 @@
-version: 2.1.0
-architectures: armeabi-v7a x86
-apiversion: 3
+version: 3.0.0
+architectures:  arm64-v8a armeabi-v7a x86
+apiversion: 4
 description: Ti.Draggable
 author: Seth Benjamin
 license: GPLv3
@@ -10,4 +10,4 @@ name: draggable
 moduleid: ti.draggable
 guid: b548a1e9-dbc1-48e9-ab85-caaa914fc0ea
 platform: android
-minsdk: 6.0.1.GA
+minsdk: 7.0.0.GA
